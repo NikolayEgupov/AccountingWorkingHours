@@ -21,26 +21,52 @@ public class EmployeesService {
         this.employeeMapper = employeeMapper;
     }
 
+    /**
+     * Метод для получения списка всех сотрудников
+     * @return список найденных сотрудников
+     */
     public List<Employee> findAll(){
         return employeeRepository.findAll();
     }
 
+    /**
+     * Метод для поиска всех сотрудников с определённым адресом электронной почты
+     * @param email проверяемая почта
+     * @return список найденных сотрудников
+     */
     public List<Employee> findByEmail(String email){
         return employeeRepository.findByEmail(email);
     }
 
+    /**
+     * Метод для поиска экземпляра сотрудника по его id
+     * @param id id сотрудника
+     * @return найденный экземпляр сотрудника
+     */
     public Employee findById(int id){
         return employeeRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Метод для сохранения экземпляра сотрудника
+     * @param employee экземпляр Employee
+     */
     public void save(Employee employee){
         employeeRepository.save(employee);
     }
 
+    /**
+     * Метод для сохранения экземпляра сотрудника из DTO
+     * @param employeeDto экземпляр EmployeeDto
+     */
     public void saveFromDto(EmployeeDto employeeDto){
         save(employeeMapper.toEntity(employeeDto));
     }
 
+    /**
+     * Метод для удаления экземпляра сотрудника по id
+     * @param id id сотрудника
+     */
     public void deleteById(int id){
 
         Employee employee = findById(id);

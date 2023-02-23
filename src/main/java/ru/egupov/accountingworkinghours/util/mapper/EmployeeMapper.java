@@ -8,7 +8,7 @@ import ru.egupov.accountingworkinghours.model.Employee;
 import java.util.Objects;
 
 @Component
-public class EmployeeMapper {
+public class EmployeeMapper implements Mapper<Employee, EmployeeDto>{
 
     private final ModelMapper modelMapper;
 
@@ -16,10 +16,12 @@ public class EmployeeMapper {
         this.modelMapper = modelMapper;
     }
 
+    @Override
     public Employee toEntity(EmployeeDto employeeDto){
         return Objects.isNull(employeeDto) ? null : modelMapper.map(employeeDto, Employee.class);
     }
 
+    @Override
     public EmployeeDto toDto(Employee employee){
         return Objects.isNull(employee) ? null : modelMapper.map(employee, EmployeeDto.class);
     }

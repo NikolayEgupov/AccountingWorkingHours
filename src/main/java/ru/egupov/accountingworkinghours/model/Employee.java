@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "employee")
@@ -36,16 +37,20 @@ public class Employee {
     @JoinColumn(name = "department")
     private Department department;
 
+    @OneToMany(mappedBy = "employee")
+    private List<EventWork> eventWorks;
+
     public Employee() {
     }
 
-    public Employee(String name, Date dateOfBirth, String email, boolean byTimeKeeper, String position, Department department) {
+    public Employee(String name, Date dateOfBirth, String email, boolean byTimeKeeper, String position, Department department, List<EventWork> eventWorks) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.byTimeKeeper = byTimeKeeper;
         this.position = position;
         this.department = department;
+        this.eventWorks = eventWorks;
     }
 
     public int getId() {
@@ -102,5 +107,13 @@ public class Employee {
 
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    public List<EventWork> getEventWorks() {
+        return eventWorks;
+    }
+
+    public void setEventWorks(List<EventWork> eventWorks) {
+        this.eventWorks = eventWorks;
     }
 }

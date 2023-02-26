@@ -32,7 +32,7 @@ public class EmployeesRestController {
     }
 
     @GetMapping("/list")
-    public List<EmployeeDto> getEmployee(@RequestParam(required = false, name = "department_id") Integer departmentId){
+    public List<EmployeeDto> getEmployees(@RequestParam(required = false, name = "department_id") Integer departmentId){
         return employeesService.findAllInDtoByParam(departmentId);
     }
 

@@ -9,6 +9,7 @@ import ru.egupov.accountingworkinghours.dto.EmployeeDto;
 import ru.egupov.accountingworkinghours.model.Employee;
 import ru.egupov.accountingworkinghours.service.EmployeesService;
 import ru.egupov.accountingworkinghours.util.ErrorResponse;
+import ru.egupov.accountingworkinghours.util.error.DepartmentNotFoundException;
 import ru.egupov.accountingworkinghours.util.error.EmployeeNotCreatedException;
 import ru.egupov.accountingworkinghours.util.error.EmployeeNotFoundException;
 import ru.egupov.accountingworkinghours.util.mapper.EmployeeMapper;
@@ -31,18 +32,13 @@ public class EmployeesRestController {
     }
 
     @GetMapping("/list")
-    public List<Employee> getEmployee(){
-        return employeesService.findAll();
+    public List<EmployeeDto> getEmployee(@RequestParam(required = false, name = "department_id") Integer departmentId){
+        return employeesService.findAllInDtoByParam(departmentId);
     }
 
     @GetMapping("/{id}")
-    public Employee getEmployeeById(@PathVariable("id") int id){
-        Employee employee = employeesService.findById(id);
-
-        if (Objects.isNull(employee))
-            throw new EmployeeNotFoundException("Сотрудник не найден");
-
-        return employee;
+    public EmployeeDto getEmployeeById(@PathVariable("id") int id){
+        return employeesService.findByIdInDto(id);
     }
 
     @PostMapping("/add")
@@ -75,7 +71,7 @@ public class EmployeesRestController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @ExceptionHandler({EmployeeNotCreatedException.class, EmployeeNotFoundException.class})
+    @ExceptionHandler({EmployeeNotCreatedException.class, EmployeeNotFoundException.class, DepartmentNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleException(RuntimeException e){
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
 

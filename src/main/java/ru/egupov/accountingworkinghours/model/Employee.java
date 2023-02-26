@@ -17,30 +17,35 @@ public class Employee {
     private int id;
 
     @Column(name = "name")
-    @NotEmpty(message = "Поле ФИО (name) должно быть заполнено")
     private String name;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "date_birth")
-    @NotNull(message = "Поле Дата рождения (dateOfBirth) должно быть заполнено")
     private Date dateOfBirth;
 
     @Column(name = "email")
-    @NotEmpty(message = "Поле Электронная почта (email) должно быть заполнено")
-    @Email(message = "Адрес электронной почты (email) указан некорректно")
     private String email;
 
     @Column(name = "by_time_keeper")
     private boolean byTimeKeeper;
 
+    @Column(name = "position")
+    private String position;
+
+    @ManyToOne
+    @JoinColumn(name = "department")
+    private Department department;
+
     public Employee() {
     }
 
-    public Employee(String name, Date dateOfBirth, String email, boolean byTimeKeeper) {
+    public Employee(String name, Date dateOfBirth, String email, boolean byTimeKeeper, String position, Department department) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.byTimeKeeper = byTimeKeeper;
+        this.position = position;
+        this.department = department;
     }
 
     public int getId() {
@@ -81,5 +86,21 @@ public class Employee {
 
     public void setByTimeKeeper(boolean byTimeKeeper) {
         this.byTimeKeeper = byTimeKeeper;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }

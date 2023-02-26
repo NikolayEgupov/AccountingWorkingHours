@@ -23,14 +23,20 @@ public class EmployeeDto {
 
     private boolean byTimeKeeper;
 
+    private Integer departmentId;
+
+    private String position;
+
     public EmployeeDto() {
     }
 
-    public EmployeeDto(String name, Date dateOfBirth, String email, boolean byTimeKeeper) {
+    public EmployeeDto(String name, Date dateOfBirth, String email, boolean byTimeKeeper, Integer departmentId, String position) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.byTimeKeeper = byTimeKeeper;
+        this.departmentId = departmentId;
+        this.position = position;
     }
 
     public int getId() {
@@ -71,5 +77,21 @@ public class EmployeeDto {
 
     public void setByTimeKeeper(boolean byTimeKeeper) {
         this.byTimeKeeper = byTimeKeeper;
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }

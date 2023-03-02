@@ -1,6 +1,7 @@
 package ru.egupov.accountingworkinghours.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -14,6 +15,7 @@ import ru.egupov.accountingworkinghours.util.error.EmployeeNotCreatedException;
 import ru.egupov.accountingworkinghours.util.error.EmployeeNotFoundException;
 import ru.egupov.accountingworkinghours.util.error.EventWorkNotCreatedException;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -27,8 +29,10 @@ public class EventWorkRestController {
     }
 
     @GetMapping("/list")
-    public List<EventWorkDTO> getEvents(){
-        return eventWorkService.findAllInDto();
+    public List<EventWorkDTO> getEvents(@RequestParam(required = false, name = "employee_id") Integer employeeId,
+                                        @RequestParam(name = "date_start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateStart,
+                                        @RequestParam(name = "date_end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateEnd){
+        return eventWorkService.findByEmployeeIdDateStartDateEndInDto(employeeId, dateStart, dateEnd);
     }
 
     @PostMapping("/add")
@@ -36,6 +40,12 @@ public class EventWorkRestController {
                                                   BindingResult bindingResult){
         validateDto(eventWorkDTO, bindingResult);
         eventWorkService.saveFromDto(eventWorkDTO);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("id") int id){
+        eventWorkService.deleteById(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

@@ -6,6 +6,7 @@ import ru.egupov.accountingworkinghours.model.EventWork;
 import ru.egupov.accountingworkinghours.repository.EventWorkRepository;
 import ru.egupov.accountingworkinghours.util.mapper.EventWorkMapper;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -28,10 +29,24 @@ public class EventWorkService {
     }
 
     public void save(EventWork eventWork){
+        if (eventWork.getDate() == null)
+            eventWork.setDate(new Date());
         eventWorkRepository.save(eventWork);
     }
 
     public void saveFromDto(EventWorkDTO eventWorkDTO){
         save(eventWorkMapper.toEntity(eventWorkDTO));
+    }
+
+    public void deleteById(int id){
+        eventWorkRepository.deleteById(id);
+    }
+
+    public List<EventWork> findByEmployeeIdDateStartDateEnd(Integer employeeId, Date dateStart, Date dateEnd){
+        return eventWorkRepository.findByEmployee_IdAndDateBetween(employeeId, dateStart, dateEnd);
+    }
+
+    public List<EventWorkDTO> findByEmployeeIdDateStartDateEndInDto(Integer employeeId, Date dateStart, Date dateEnd) {
+        return eventWorkMapper.toDto(findByEmployeeIdDateStartDateEnd(employeeId, dateStart, dateEnd));
     }
 }

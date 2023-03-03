@@ -2,6 +2,7 @@ package ru.egupov.accountingworkinghours.service;
 
 import org.springframework.stereotype.Service;
 import ru.egupov.accountingworkinghours.dto.EventWorkDTO;
+import ru.egupov.accountingworkinghours.model.Employee;
 import ru.egupov.accountingworkinghours.model.EventWork;
 import ru.egupov.accountingworkinghours.repository.EventWorkRepository;
 import ru.egupov.accountingworkinghours.util.mapper.EventWorkMapper;
@@ -10,12 +11,12 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class EventWorkService {
+public class EventsWorkService {
 
     private final EventWorkRepository eventWorkRepository;
     private final EventWorkMapper eventWorkMapper;
 
-    public EventWorkService(EventWorkRepository eventWorkRepository, EventWorkMapper eventWorkMapper) {
+    public EventsWorkService(EventWorkRepository eventWorkRepository, EventWorkMapper eventWorkMapper) {
         this.eventWorkRepository = eventWorkRepository;
         this.eventWorkMapper = eventWorkMapper;
     }
@@ -48,5 +49,9 @@ public class EventWorkService {
 
     public List<EventWorkDTO> findByEmployeeIdDateStartDateEndInDto(Integer employeeId, Date dateStart, Date dateEnd) {
         return eventWorkMapper.toDto(findByEmployeeIdDateStartDateEnd(employeeId, dateStart, dateEnd));
+    }
+
+    public List<EventWork> findByEmployeeAndDateBetweenOrderByDate(Employee employee, Date dateStart, Date dateEnd){
+        return eventWorkRepository.findByEmployeeAndDateBetweenOrderByDate(employee, dateStart, dateEnd);
     }
 }

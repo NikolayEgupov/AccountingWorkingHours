@@ -1,6 +1,7 @@
 package ru.egupov.accountingworkinghours.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,35 +21,29 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/employees")
+@AllArgsConstructor
 public class EmployeesRestController {
 
     private final EmployeesService employeesService;
     private final EmployeeValidator employeeValidator;
 
-
-    public EmployeesRestController(EmployeesService employeesService, EmployeeValidator employeeValidator) {
-        this.employeesService = employeesService;
-        this.employeeValidator = employeeValidator;
-    }
-
     @GetMapping("/list")
-    public List<EmployeeDto> getEmployees(@RequestParam(required = false, name = "department_id") Integer departmentId){
-        return employeesService.findAllInDtoByParam(departmentId);
+    public List<EmployeeDto> getEmployees(@RequestParam(required = false, name = "department_id") Integer departmentId,
+                                          @RequestParam(required = false, name = "name") String name,
+                                          @RequestParam(required = false, name = "email") String email){
+        return employeesService.getAllByParamInDto(departmentId, name, email);
     }
 
     @GetMapping("/{id}")
     public EmployeeDto getEmployeeById(@PathVariable("id") int id){
-        return employeesService.findByIdInDto(id);
+        return employeesService.getByIdInDto(id);
     }
 
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> add(@RequestBody @Valid EmployeeDto employeeDto,
                                           BindingResult bindingResult){
-
         validateDto(employeeDto, bindingResult);
-
         employeesService.saveFromDto(employeeDto);
-
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -56,12 +51,8 @@ public class EmployeesRestController {
     public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,
                                              @RequestBody @Valid EmployeeDto employeeDto,
                                              BindingResult bindingResult){
-
-        employeeDto.setId(id);
         validateDto(employeeDto, bindingResult);
-
-        employeesService.saveFromDto(employeeDto);
-
+        employeesService.updateFromDto(employeeDto, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -74,7 +65,6 @@ public class EmployeesRestController {
     @ExceptionHandler({EmployeeNotCreatedException.class, EmployeeNotFoundException.class, DepartmentNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleException(RuntimeException e){
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 

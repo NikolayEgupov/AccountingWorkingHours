@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class DateTools {
-
     public static Date getStartDay(Date date){
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.setTime(date);

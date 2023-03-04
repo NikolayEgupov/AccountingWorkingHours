@@ -1,11 +1,18 @@
 package ru.egupov.accountingworkinghours.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "event_work")
+@Getter
+@Setter
+@NoArgsConstructor
 public class EventWork {
 
     @Id
@@ -25,44 +32,10 @@ public class EventWork {
     @Column(name = "event_type")
     private EventType eventType;
 
-    public EventWork() {
-    }
-
     public EventWork(Employee employee, Date date, EventType eventType) {
         this.employee = employee;
         this.date = date;
         this.eventType = eventType;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public EventType getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
-    }
 }

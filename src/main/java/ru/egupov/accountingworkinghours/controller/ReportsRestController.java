@@ -1,5 +1,6 @@
 package ru.egupov.accountingworkinghours.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,25 +14,22 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reports")
+@AllArgsConstructor
 public class ReportsRestController {
 
     private final ReportsService reportsService;
 
-    public ReportsRestController(ReportsService reportsService) {
-        this.reportsService = reportsService;
-    }
-
     @GetMapping("/employee_shifts")
     public EmployeeListShift getEmployeeShiftsReport(@RequestParam(name = "employee_id") int employeeId,
-                                                  @RequestParam(name = "date_start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateStart,
-                                                  @RequestParam(name = "date_end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateEnd){
+                                                     @RequestParam(name = "date_start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateStart,
+                                                     @RequestParam(name = "date_end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateEnd){
         return reportsService.employeeListShiftReportByEmployeeId(employeeId, dateStart, dateEnd);
     }
 
     @GetMapping("/department_shifts")
     public List<EmployeeListShift> getDepartmentShiftsReport(@RequestParam(name = "department_id") int departmentId,
-                                                       @RequestParam(name = "date_start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateStart,
-                                                       @RequestParam(name = "date_end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateEnd){
+                                                             @RequestParam(name = "date_start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateStart,
+                                                             @RequestParam(name = "date_end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateEnd){
         return reportsService.departmentShiftReportByDepartmentId(departmentId, dateStart, dateEnd);
     }
 

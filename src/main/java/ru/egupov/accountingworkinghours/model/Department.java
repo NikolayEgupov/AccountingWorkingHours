@@ -1,11 +1,17 @@
 package ru.egupov.accountingworkinghours.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Table(name = "department")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Department {
 
     @Id
@@ -19,36 +25,9 @@ public class Department {
     @OneToMany(mappedBy = "department")
     private List<Employee> employees;
 
-    public Department() {
-    }
-
     public Department(String name, List<Employee> employees) {
         this.name = name;
         this.employees = employees;
     }
 
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Employee> getEmployees() {
-        return employees;
-    }
-
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
-    }
 }

@@ -1,6 +1,7 @@
 package ru.egupov.accountingworkinghours.controller;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.egupov.accountingworkinghours.dto.EventWorkDTO;
 import ru.egupov.accountingworkinghours.service.EventsWorkService;
 import ru.egupov.accountingworkinghours.util.ErrorResponse;
+import ru.egupov.accountingworkinghours.util.error.EmployeeNotFoundException;
 import ru.egupov.accountingworkinghours.util.error.EventWorkNotCreatedException;
 
 import java.util.Date;
@@ -16,19 +18,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/events")
+@AllArgsConstructor
 public class EventsWorkRestController {
 
     private final EventsWorkService eventsWorkService;
 
-    public EventsWorkRestController(EventsWorkService eventsWorkService) {
-        this.eventsWorkService = eventsWorkService;
-    }
-
     @GetMapping("/list")
-    public List<EventWorkDTO> getEvents(@RequestParam(required = false, name = "employee_id") Integer employeeId,
+    public List<EventWorkDTO> getEvents(@RequestParam(name = "employee_id") int employeeId,
                                         @RequestParam(name = "date_start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateStart,
                                         @RequestParam(name = "date_end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateEnd){
-        return eventsWorkService.findByEmployeeIdDateStartDateEndInDto(employeeId, dateStart, dateEnd);
+        return eventsWorkService.getByEmployeeIdDateStartDateEndInDto(employeeId, dateStart, dateEnd);
     }
 
     @PostMapping("/add")
@@ -60,11 +59,9 @@ public class EventsWorkRestController {
         }
     }
 
-    @ExceptionHandler({EventWorkNotCreatedException.class})
+    @ExceptionHandler({EventWorkNotCreatedException.class, EmployeeNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleException(RuntimeException e){
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
 }

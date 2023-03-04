@@ -1,5 +1,6 @@
 package ru.egupov.accountingworkinghours.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.egupov.accountingworkinghours.dto.DepartmentDTO;
 import ru.egupov.accountingworkinghours.model.Department;
@@ -11,50 +12,44 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class DepartmentsService {
 
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
 
-
-    public DepartmentsService(DepartmentRepository departmentRepository, DepartmentMapper departmentMapper) {
-        this.departmentRepository = departmentRepository;
-        this.departmentMapper = departmentMapper;
+    public List<DepartmentDTO> getAllInDto(){
+        return departmentMapper.toDto(getAll());
     }
 
-    public List<Department> findAll(){
+    public List<Department> getAll(){
         return departmentRepository.findAll();
     }
 
-    public List<DepartmentDTO> findAllInDto(){
-        return convertToListDto(findAll());
+    public DepartmentDTO getByIdInDto(int id){
+        return departmentMapper.toDto(getById(id));
     }
 
-    public Department findById(int id){
-        return departmentRepository.findById(id).orElseThrow(() -> new DepartmentNotFoundException("Департамент с таким id не найден"));
+    public Department getById(int id){
+        return departmentRepository.findById(id)
+                .orElseThrow(() -> new DepartmentNotFoundException("The department with this ID was not found."));
     }
 
-    public DepartmentDTO findByIdInDto(int id){
-        return convertToDto(findById(id));
-    }
-
-    public void save(Department department){
-        departmentRepository.save(department);
+    public void updateFromDto(DepartmentDTO departmentDTO, int id){
+        departmentDTO.setId(id);
+        save(departmentMapper.toEntity(departmentDTO));
     }
 
     public void saveFromDto(DepartmentDTO departmentDTO){
         save(departmentMapper.toEntity(departmentDTO));
     }
 
+    public void save(Department department){
+        departmentRepository.save(department);
+    }
+
     public void deleteById(int id){
         departmentRepository.deleteById(id);
     }
 
-    private List<DepartmentDTO> convertToListDto(List<Department> departments){
-        return departments.stream().map(departmentMapper::toDto).collect(Collectors.toList());
-    }
-
-    private DepartmentDTO convertToDto(Department department){
-        return departmentMapper.toDto(department);
-    }
 }

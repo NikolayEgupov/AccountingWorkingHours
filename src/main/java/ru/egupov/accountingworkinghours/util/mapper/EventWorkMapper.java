@@ -2,6 +2,7 @@ package ru.egupov.accountingworkinghours.util.mapper;
 
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -15,14 +16,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class EventWorkMapper implements Mapper<EventWork, EventWorkDTO>{
+@RequiredArgsConstructor
+public class EventWorkMapper implements MapperImpl<EventWork, EventWorkDTO>{
 
     private final ModelMapper modelMapper;
     private final EmployeesService employeesService;
 
-    public EventWorkMapper(ModelMapper modelMapper, EmployeesService employeesService) {
-        this.modelMapper = modelMapper;
-        this.employeesService = employeesService;
+    @Override
+    public List<EventWork> toEntity(List<EventWorkDTO> dto) {
+        return dto.stream().map(this::toEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -31,12 +33,13 @@ public class EventWorkMapper implements Mapper<EventWork, EventWorkDTO>{
     }
 
     @Override
-    public EventWorkDTO toDto(EventWork entity) {
-        return Objects.isNull(entity) ? null : modelMapper.map(entity, EventWorkDTO.class);
+    public List<EventWorkDTO> toDto(List<EventWork> entity) {
+        return entity.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<EventWorkDTO> toDto(List<EventWork> works) {
-        return works.stream().map(x -> toDto(x)).collect(Collectors.toList());
+    @Override
+    public EventWorkDTO toDto(EventWork entity) {
+        return Objects.isNull(entity) ? null : modelMapper.map(entity, EventWorkDTO.class);
     }
 
     @PostConstruct
@@ -49,8 +52,7 @@ public class EventWorkMapper implements Mapper<EventWork, EventWorkDTO>{
                                    m.skip(EventWork::setEventType);}).setPostConverter(toEntityConverter());
     }
 
-
-    Converter<EventWork, EventWorkDTO> toDtoConverter() {
+    private Converter<EventWork, EventWorkDTO> toDtoConverter() {
         return context -> {
             EventWork source = context.getSource();
             EventWorkDTO destination = context.getDestination();
@@ -59,7 +61,7 @@ public class EventWorkMapper implements Mapper<EventWork, EventWorkDTO>{
         };
     }
 
-    Converter<EventWorkDTO, EventWork> toEntityConverter() {
+    private Converter<EventWorkDTO, EventWork> toEntityConverter() {
         return context -> {
             EventWorkDTO source = context.getSource();
             EventWork destination = context.getDestination();
@@ -68,13 +70,13 @@ public class EventWorkMapper implements Mapper<EventWork, EventWorkDTO>{
         };
     }
 
-    void mapSpecificFields(EventWork source, EventWorkDTO destination) {
+    private void mapSpecificFields(EventWork source, EventWorkDTO destination) {
         destination.setEmployeeId(source.getEmployee().getId());
         destination.setEventType(source.getEventType().toString());
     }
 
-    void mapSpecificFields(EventWorkDTO source, EventWork destination) {
-        destination.setEmployee(employeesService.findById(source.getEmployeeId()));
+    private void mapSpecificFields(EventWorkDTO source, EventWork destination) {
+        destination.setEmployee(employeesService.getById(source.getEmployeeId()));
         destination.setEventType(EventType.valueOf(source.getEventType()));
     }
 }

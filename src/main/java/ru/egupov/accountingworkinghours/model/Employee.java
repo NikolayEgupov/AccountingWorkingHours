@@ -4,12 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "employee")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Employee {
 
     @Id
@@ -26,10 +32,6 @@ public class Employee {
 
     @Column(name = "email")
     private String email;
-
-    @Column(name = "by_time_keeper")
-    private boolean byTimeKeeper;
-
     @Column(name = "position")
     private String position;
 
@@ -40,80 +42,13 @@ public class Employee {
     @OneToMany(mappedBy = "employee")
     private List<EventWork> eventWorks;
 
-    public Employee() {
-    }
-
-    public Employee(String name, Date dateOfBirth, String email, boolean byTimeKeeper, String position, Department department, List<EventWork> eventWorks) {
+    public Employee(String name, Date dateOfBirth, String email, String position, Department department, List<EventWork> eventWorks) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
-        this.byTimeKeeper = byTimeKeeper;
         this.position = position;
         this.department = department;
         this.eventWorks = eventWorks;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public boolean isByTimeKeeper() {
-        return byTimeKeeper;
-    }
-
-    public void setByTimeKeeper(boolean byTimeKeeper) {
-        this.byTimeKeeper = byTimeKeeper;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public List<EventWork> getEventWorks() {
-        return eventWorks;
-    }
-
-    public void setEventWorks(List<EventWork> eventWorks) {
-        this.eventWorks = eventWorks;
-    }
 }

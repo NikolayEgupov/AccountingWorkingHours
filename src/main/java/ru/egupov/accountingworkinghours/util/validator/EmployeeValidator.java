@@ -1,5 +1,6 @@
 package ru.egupov.accountingworkinghours.util.validator;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -9,15 +10,11 @@ import ru.egupov.accountingworkinghours.service.DepartmentsService;
 import ru.egupov.accountingworkinghours.service.EmployeesService;
 
 @Component
+@RequiredArgsConstructor
 public class EmployeeValidator implements Validator {
 
     private final EmployeesService employeesService;
     private final DepartmentsService departmentsService;
-
-    public EmployeeValidator(EmployeesService employeesService, DepartmentsService departmentsService) {
-        this.employeesService = employeesService;
-        this.departmentsService = departmentsService;
-    }
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -29,20 +26,19 @@ public class EmployeeValidator implements Validator {
         EmployeeDto employee = (EmployeeDto) target;
 
         try {
+
             Integer departmentId = employee.getDepartmentId();
-
             if (departmentId != null)
-                departmentsService.findById(departmentId);
+                departmentsService.getById(departmentId);
 
-            Employee findEmployee = employeesService.findByEmail(employee.getEmail()).get(0);
+            Employee findEmployee = employeesService.getByParam(null, null, employee.getEmail()).get(0);
 
             if (employee.getId() == 0 || findEmployee.getId() != employee.getId()){
                 errors.rejectValue("email", "",
                         "Сотрудник с такой электронной почтой уже существует");
             }
-        } catch (IndexOutOfBoundsException ignored) {
 
-        }
+        } catch (IndexOutOfBoundsException ignored) {}
 
     }
 }

@@ -1,5 +1,6 @@
 package ru.egupov.accountingworkinghours.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.egupov.accountingworkinghours.model.Employee;
 import ru.egupov.accountingworkinghours.model.EventType;
@@ -13,19 +14,16 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ShiftService {
 
     private final EventsWorkService eventsWorkService;
-
-    public ShiftService(EventsWorkService eventsWorkService) {
-        this.eventsWorkService = eventsWorkService;
-    }
 
     public List<Shift> getShiftsOnPeriod(Employee employee, Date dateStart, Date dateEnd){
 
         List<Shift> retShifts = new ArrayList<>();
 
-        List<EventWork> eventWorks = eventsWorkService.findByEmployeeAndDateBetweenOrderByDate(employee, dateStart, dateEnd);
+        List<EventWork> eventWorks = eventsWorkService.getByEmployeeAndDateBetweenOrderByDate(employee, dateStart, dateEnd);
 
         for (int i = 0; i < ChronoUnit.DAYS.between(dateStart.toInstant(), dateEnd.toInstant()); i++) {
             Date dtStartInIter = new Date(dateStart.getTime() + (24L * 60 * 60 * 1000 * i - 1));
@@ -40,25 +38,25 @@ public class ShiftService {
         return retShifts;
     }
 
-    public List<Shift> calcShiftOnDay(List<EventWork> eventWorksOnDays){
+    /**
+     * Рассчитывает фактические смены за день
+     * @param eventWorksOnDays - выборка EventWork за один день
+     * @return список смен за день с расчетом времени
+     */
+    private List<Shift> calcShiftOnDay(List<EventWork> eventWorksOnDays){
 
         List<Shift> shiftList = new ArrayList<>();
 
         for (int j = 0; j < eventWorksOnDays.size(); j++){
+            Shift shiftEvent = new Shift();
 
-            Shift shiftEvent = null;
-
-            if (eventWorksOnDays.get(j).getEventType() == EventType.END_WORK){
-                if (j == 0) {
-                    shiftEvent = new Shift();
-                    shiftEvent.setDateStart(
-                            DateTools.getStartDay(eventWorksOnDays.get(j).getDate())
-                    );
-                    shiftEvent.setDateEnd(eventWorksOnDays.get(j).getDate());
-                    shiftEvent.setEventEndId(eventWorksOnDays.get(j).getId());
-                }
+            if (j == 0 && eventWorksOnDays.get(j).getEventType() == EventType.END_WORK){
+                shiftEvent.setDateStart(
+                        DateTools.getStartDay(eventWorksOnDays.get(j).getDate())
+                );
+                shiftEvent.setDateEnd(eventWorksOnDays.get(j).getDate());
+                shiftEvent.setEventEndId(eventWorksOnDays.get(j).getId());
             } else if (eventWorksOnDays.get(j).getEventType() == EventType.START_WORK){
-                shiftEvent = new Shift();
                 shiftEvent.setDateStart(eventWorksOnDays.get(j).getDate());
                 shiftEvent.setEventStartId(eventWorksOnDays.get(j).getId());
 
@@ -70,7 +68,7 @@ public class ShiftService {
                 }
             }
 
-            if (shiftEvent != null){
+            if (shiftEvent.getDateStart() != null){
                 shiftEvent.setAmountTimeMinute(
                         (int) ChronoUnit.MINUTES.between(shiftEvent.getDateStart().toInstant(),
                                 shiftEvent.getDateEnd().toInstant()));
